@@ -14,6 +14,15 @@ app.get('/pets', (req, res) => {
   knex('pet')
     .join('pet_type', 'pet.pet_type_id', 'pet_type.id')
     .select('pet.id', 'pet.name', 'pet_type.name as type')
+    .then(pets => {
+      res.json(pets);
+    });
+});
+
+app.get('/pets/sort', (req, res) => {
+  knex('pet')
+    .join('pet_type', 'pet.pet_type_id', 'pet_type.id')
+    .select('pet.id', 'pet.name', 'pet_type.name as type')
     .orderBy('pet.name')
     .then(pets => {
       res.json(pets);
@@ -54,7 +63,7 @@ app.get('/pets/limit/:limit', (req, res) => {
 app.post('/pets', async (req, res) => {
   try {
     if (!req.body.name || !req.body.type) {
-      return res.status(400).json({ error: 'name and type are required' });
+      return res.status(400).json({ error: 'Name and type are required.' });
     }
 
     const type = await knex('pet_type').where('name', req.body.type).first();
@@ -71,6 +80,40 @@ app.post('/pets', async (req, res) => {
       .returning('*');
 
     res.status(201).json(newPet[0]);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+app.patch('/pets/:id', async (req, res) => {
+  try {
+    if (!req.body.name) {
+      return res.status(400).json({ error: 'Name is required.' });
+    }
+
+    const updatedPet = await knex('pet')
+      .where('pet.id', req.params.id)
+      .update({ name: req.body.name })
+      .returning('*');
+
+    res.status(200).json(updatedPet[0]);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+app.delete('/pets/:id', async (req, res) => {
+  try {
+    const deletedPet = await knex('pet')
+      .where('id', req.params.id)
+      .del()
+      .returning('*');
+
+    if (!deletedPet.length) {
+      return res.status(404).json({ error: 'Pet not found.' });
+    }
+
+    res.status(200).json(deletedPet[0]);
   } catch (err) {
     res.status(500).json(err);
   }
