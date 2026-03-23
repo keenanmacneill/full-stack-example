@@ -1,4 +1,4 @@
-import { request } from './client';
+import { request } from './request';
 
 export const getAllPets = () => request('/pets');
 export const getPetById = id => request(`/pets/${id}`);
