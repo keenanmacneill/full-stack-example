@@ -1,5 +1,5 @@
 const { faker } = require('@faker-js/faker');
-const { generateInt } = require('../../../utils/generateInt');
+const { generateInt } = require('./generateInt');
 
 exports.generatePets = num => [
   {
