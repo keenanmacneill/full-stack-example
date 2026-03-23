@@ -1,30 +1,30 @@
 ### Get all pets sorted by id
-GET http://localhost:8081/pets
+GET http://localhost:8080/pets
 
 ### Get all pets sorted by name
-GET http://localhost:8081/pets/sort
+GET http://localhost:8080/pets/sort
 
 ### Get pet by id
-GET http://localhost:8081/pets/1
+GET http://localhost:8080/pets/1
 
 ### Get pets by type
-GET http://localhost:8081/pets/type/bird
+GET http://localhost:8080/pets/type/bird
 
 ### Get pets by limit
-GET http://localhost:8081/pets/limit/2
+GET http://localhost:8080/pets/limit/2
 
 ### Add new pet
-POST http://localhost:8081/pets
+POST http://localhost:8080/pets
 Content-Type: application/json
 
 {"name":"Bob","type":"dog"}
 
 ### Update pet's name
-PATCH http://localhost:8081/pets/1
+PATCH http://localhost:8080/pets/1
 Content-Type: application/json
 
 {"name":"Bob"}
 
 ### Delete pet
-DELETE http://localhost:8081/pets/5
+DELETE http://localhost:8080/pets/5
 Content-Type: application/json

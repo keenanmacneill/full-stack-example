@@ -5,9 +5,9 @@
   "main": "src/server.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev nodemon src/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/server.js",
     "test": "cross-env NODE_ENV=test knex migrate:latest && knex seed:run",
-    "start": "cross-env NODE_ENV=prod node src/server.js",
+    "start": "cross-env NODE_ENV=production node src/server.js",
     "migrate-make": "knex migrate:make",
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
