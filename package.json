@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "docker": "^1.0.0",
-    "docker-compose": "^1.3.2"
+    "docker-compose": "^1.3.2",
+    "react-router-dom": "^7.13.2"
   }
 }
