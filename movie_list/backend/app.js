@@ -39,8 +39,15 @@ app.get('/movies/:id', async (req, res) => {
 app.post('/movies/', async (req, res) => {
   try {
     const { title } = req.body;
+
+    if (!title) {
+      return res.status(401).json({ message: 'Movie must have a title.' });
+    }
+
     const [newMovie] = await db('movies').insert({ title }).returning('*');
-    res.status(200).json(newMovie);
+    res
+      .status(200)
+      .json({ message: `'${newMovie.title}' was successfully created.` });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -57,7 +64,9 @@ app.delete('/movies/:id', async (req, res) => {
 
     !deletedMovie
       ? res.status(404).json({ message: 'Movie does not exist.' })
-      : res.status(200).json(deletedMovie);
+      : res
+          .status(200)
+          .json({ message: `'${deletedMovie}' was successfully deleted.` });
   } catch (err) {
     res
       .status(err.status || 500)

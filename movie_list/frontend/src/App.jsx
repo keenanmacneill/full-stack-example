@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Movie from './Movie';
 
 export default function App() {
   const [movies, setMovies] = useState([]);
@@ -32,7 +33,7 @@ export default function App() {
 
       const data = await res.json();
 
-      setSubmitMessage(`'${data.title}' was successfully created.`);
+      setSubmitMessage(data.message);
     } catch (err) {
       setSubmitMessage(err.message);
     }
@@ -66,7 +67,7 @@ export default function App() {
       </div>
 
       {filteredMovies.map(m => (
-        <h1>{m.title}</h1>
+        <Movie key={m.id} m={m} />
       ))}
     </>
   );
