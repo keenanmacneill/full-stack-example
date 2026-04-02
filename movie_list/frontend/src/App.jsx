@@ -15,6 +15,9 @@ export default function App() {
   const [unwatched, setUnwatched] = useState(
     () => JSON.parse(localStorage.getItem('unwatched')) || movies,
   );
+  const [selectedMovie, setSelectedMovie] = useState(
+    () => JSON.parse(localStorage.getItem('selectedMovie')) || null,
+  );
 
   useEffect(() => {
     const getMovies = async () => {
@@ -53,8 +56,6 @@ export default function App() {
     filter !== 'unwatched' ? setFilter('unwatched') : setFilter('all');
   };
 
-  if (!movies.length) return <h1>Loading...</h1>;
-
   let filteredMovies;
 
   if (filter === 'watched')
@@ -70,52 +71,99 @@ export default function App() {
       movie.title.toLowerCase().includes(searchValue.toLowerCase()),
     );
 
+  const handleToggle = () => {
+    let newWatched = watched;
+    let newUnwatched = unwatched;
+
+    if (watched.some(movie => movie.id === selectedMovie.id)) {
+      newWatched = watched.filter(movie => movie.id !== selectedMovie.id);
+      localStorage.setItem('watched', JSON.stringify(newWatched));
+      setWatched(newWatched);
+
+      newUnwatched.push(selectedMovie);
+      localStorage.setItem('unwatched', JSON.stringify(newUnwatched));
+      setUnwatched(newUnwatched);
+
+      return;
+    }
+
+    newWatched.push(selectedMovie);
+    localStorage.setItem('watched', JSON.stringify(newWatched));
+    setWatched(newWatched);
+
+    newUnwatched = unwatched.filter(movie => movie.id !== selectedMovie.id);
+    localStorage.setItem('unwatched', JSON.stringify(newUnwatched));
+    setUnwatched(newUnwatched);
+  };
+
   return (
     <>
-      <div>
-        <input
-          type="text"
-          value={searchValue}
-          onChange={e => {
-            setSearchValue(e.target.value);
+      <div style={{ display: 'flex', flexFlow: 'column' }}>
+        <div>
+          <input
+            type="text"
+            value={searchValue}
+            onChange={e => {
+              setSearchValue(e.target.value);
+            }}
+            placeholder="Search..."
+          ></input>
+
+          <input
+            type="text"
+            value={newMovieTitle}
+            onChange={e => {
+              setNewMovieTitle(e.target.value);
+            }}
+            placeholder="Add new movie title..."
+          ></input>
+
+          <button onClick={handleCreateMovie} style={{ cursor: 'pointer' }}>
+            Submit
+          </button>
+
+          <button onClick={handleFilterWatched} style={{ cursor: 'pointer' }}>
+            {filter !== 'watched' ? 'See Watched Movies' : 'See All Movies'}
+          </button>
+
+          <button onClick={handleFilterUnwatched} style={{ cursor: 'pointer' }}>
+            {filter !== 'unwatched' ? 'See Unwatched Movies' : 'See All Movies'}
+          </button>
+
+          {submitMessage ? <div>{submitMessage}</div> : ''}
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
           }}
-          placeholder="Search..."
-        ></input>
+        >
+          <div>
+            {!filteredMovies
+              ? 'Loading...'
+              : filteredMovies.map(m => (
+                  <Movie key={m.id} m={m} setSelectedMovie={setSelectedMovie} />
+                ))}
+          </div>
 
-        <input
-          type="text"
-          value={newMovieTitle}
-          onChange={e => {
-            setNewMovieTitle(e.target.value);
-          }}
-          placeholder="Add new movie title..."
-        ></input>
-
-        <button onClick={handleCreateMovie} style={{ cursor: 'pointer' }}>
-          Submit
-        </button>
-
-        <button onClick={handleFilterWatched} style={{ cursor: 'pointer' }}>
-          {filter !== 'watched' ? 'See Watched Movies' : 'See All Movies'}
-        </button>
-
-        <button onClick={handleFilterUnwatched} style={{ cursor: 'pointer' }}>
-          {filter !== 'unwatched' ? 'See Unwatched Movies' : 'See All Movies'}
-        </button>
-
-        {submitMessage ? <div>{submitMessage}</div> : ''}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {!selectedMovie ? (
+              'No movie selected'
+            ) : (
+              <>
+                <input
+                  type="checkbox"
+                  onClick={handleToggle}
+                  checked={watched.some(movie => movie.id === selectedMovie.id)}
+                ></input>
+                <div>{selectedMovie.title}</div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
-
-      {filteredMovies.map(m => (
-        <Movie
-          key={m.id}
-          m={m}
-          setWatched={setWatched}
-          watched={watched}
-          unwatched={unwatched}
-          setUnwatched={setUnwatched}
-        />
-      ))}
     </>
   );
 }
